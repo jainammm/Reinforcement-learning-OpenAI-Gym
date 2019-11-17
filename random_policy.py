@@ -16,13 +16,13 @@ for i_episode in range(1000):
     observation = env.reset()
     t=0
     while True:
-        env.render()
+        # env.render()
         action = env.action_space.sample()  # Random action
         observation, reward, done, info = env.step(action)
         t+=1
-        if done:
-            print("Episode finished after {} timesteps".format(t+1))
-            numOfSteps[i_episode] = t+1
+        if reward == 20:
+            print("Episode finished after {} timesteps".format(t))
+            numOfSteps[i_episode] = t
             break
 env.close()
 
