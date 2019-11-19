@@ -18,11 +18,12 @@ for i_episode in range(1000):
     t=0
     while True:
         # env.render()
-        action = env.action_space.sample()  # Random action
+        action = random.randint(0, 5)  # Random action
         observation, reward, done, info = env.step(action)
+        # print(observation, info)
         t+=1
         if done:
-            print(info, reward)
+            # print(info, reward)
             print("Episode finished after {} timesteps".format(t))
             numOfSteps[i_episode] = t
             break
