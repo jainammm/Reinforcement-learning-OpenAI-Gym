@@ -84,17 +84,41 @@ def policy_iteration(env, policy_eval_fn=policy_evaluation, discount_factor=1.0)
         Returns:
             A vector of length env.nA containing the expected value of each action.
         """
-        A = np.zeros(env.env.nA)
-       #Todo: Write your code here
+        A = np.zeros(env.nA)
+        for a in range(env.nA):
+            for prob, reward, nextState, done in env.P[state][a]:
+                A[a] += prob * (reward + discount_factor * V[nextState])
 
 
         return A
 
     # Start with a random policy
-    policy = np.ones([env.env.nS, env.env.nA]) / env.env.nA
+    policy = np.ones([env.nS, env.nA]) / env.nA
+    
+    numIterations = 0
 
     while True:
-        # Implement the policy iteration algorithm here!!
+        numIterations += 1
+        
+        V = policy_eval_fn(policy, env, discount_factor)
+        policyStable = True
+        
+        for s in range(env.nS):
+            oldAction = np.argmax(policy[s])
+
+            qValues = one_step_lookahead(s, V)
+            newAction = np.argmax(qValues)
+
+            if oldAction != newAction:
+                policyStable = False
+                        
+            policy[s] = np.zeros([env.nA])
+            policy[s][newAction] = 1
+
+        if policyStable:
+            print(numIterations)
+            return policy, V
+
         
     
     return policy, np.zeros(env.env.nS)
