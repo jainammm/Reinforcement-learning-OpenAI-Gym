@@ -86,7 +86,7 @@ def policy_iteration(env, policy_eval_fn=policy_evaluation, discount_factor=1.0)
         """
         A = np.zeros(env.nA)
         for a in range(env.nA):
-            for prob, reward, nextState, done in env.P[state][a]:
+            for prob, nextState, reward, done in env.P[state][a]:
                 A[a] += prob * (reward + discount_factor * V[nextState])
 
 
