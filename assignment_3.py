@@ -151,12 +151,38 @@ def value_iteration(env, theta=0.0001, discount_factor=1.0):
             A vector of length env.nA containing the expected value of each action.
         """
         A = np.zeros(env.env.nA)
-        # write your code here for one-step look-ahead
+        for a in range(env.nA):
+            for prob, nextState, reward, done in env.P[state][a]:
+                A[a] += prob * (reward + discount_factor * V[nextState])
+
         return A
     
     V = np.zeros(env.env.nS)
+    
+    numIterations = 0
+    
     while True:
-    # Implement value iteration here!
+        numIterations += 1
+        delta = 0
+        
+        for s in range(env.nS):
+            qValues = one_step_lookahead(s, V)
+            newValue = np.max(qValues)
+            
+            delta = max(delta, np.abs(newValue - V[s]))
+            V[s] = newValue
+        
+        if delta < theta:
+            break
+    
+    policy = np.zeros([env.nS, env.nA])
+    for s in range(env.nS):  #for all states, create deterministic policy
+        qValues = one_step_lookahead(s,V)
+        
+        newAction = np.argmax(qValues)
+        policy[s][newAction] = 1
+    
+    print(numIterations)    
     return policy, V
 
 
