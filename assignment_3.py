@@ -37,7 +37,6 @@ env.close()
 
 print("Average number of steps for random policy is:", np.average(numOfSteps))
 
-
 def policy_evaluation(policy, env, discount_factor=1.0, theta=0.00001):
     """
     Implement the policy evluation algorithm here given a policy and a complete model of the environment.
@@ -143,7 +142,10 @@ def policy_iteration(env, policy_eval_fn=policy_evaluation, discount_factor=1.0)
     
     return policy, np.zeros(env.env.nS)
 
-
+env.reset()
+policyPI, valuePI = policy_iteration(env, discount_factor=0.95)
+# print(policyPI)
+# print(valuePI)
 
 def value_iteration(env, theta=0.0001, discount_factor=1.0):
     """
