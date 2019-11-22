@@ -3,6 +3,7 @@ from gym import envs
 import numpy as np 
 import pandas as pd 
 import random
+import matplotlib.pyplot as plt
 
 import warnings
 warnings.filterwarnings('ignore')
@@ -213,6 +214,36 @@ env.reset()
 policyVI,valueVI = value_iteration(env, discount_factor=0.95)
 # print(policyVI)
 # print(valueVI)
+
+samePolicy = True
+for s in range(env.nS):
+    if samePolicy == False:
+        break
+    for a in range(env.nA):
+        if policyPI[s][a] != policyVI[s][a]:
+            samePolicy=False
+            break
+
+if samePolicy:
+    print("Policy Iteration and Value Iteration give same Policy")
+else:
+    print("Policy Iteration and Value Iteration does not give same Policy")
+
+# Use the following function to see the rendering of the final policy output in the environment
+def view_policy(policy):
+    curr_state = env.reset()
+    counter = 0
+    reward = None
+    while reward != 20:
+        state, reward, done, info = env.step(np.argmax(policy[curr_state])) 
+        curr_state = state
+        counter += 1
+        env.env.s = curr_state
+        env.render()
+    
+    return counter
+
+
 
 def Q_learning_train(env,alpha,gamma,epsilon,episodes): 
     """Q Learning Algorithm with epsilon greedy policy
