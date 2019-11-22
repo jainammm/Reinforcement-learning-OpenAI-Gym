@@ -15,7 +15,27 @@ Implement a random policy here.
 A random policy chooses a valid action in a state uniformly at random.
 
 """
+env._max_episode_steps = 40000
 
+numOfSteps = np.zeros(1000)
+
+for i_episode in range(1000):
+    observation = env.reset()
+    t=0
+    while True:
+        # env.render()
+        action = random.randint(0, 5)  # Random action
+        observation, reward, done, info = env.step(action)
+        # print(observation, info)
+        t+=1
+        if done:
+            # print(info, reward)
+            print("Episode finished after {} timesteps".format(t))
+            numOfSteps[i_episode] = t
+            break
+env.close()
+
+print("Average number of steps for random policy is:", np.average(numOfSteps))
 
 
 def policy_evaluation(policy, env, discount_factor=1.0, theta=0.00001):
@@ -122,6 +142,8 @@ def policy_iteration(env, policy_eval_fn=policy_evaluation, discount_factor=1.0)
         
     
     return policy, np.zeros(env.env.nS)
+
+
 
 def value_iteration(env, theta=0.0001, discount_factor=1.0):
     """
@@ -235,9 +257,9 @@ def view_policy(policy):
 
 
 
-#random_policy = np.ones([env.env.nS, env.env.nA]) / env.env.nA
-#policy_eval(random_policy,env,discount_factor=0.9)
+# random_policy = np.ones([env.env.nS, env.env.nA]) / env.env.nA
+# policy_eval(random_policy,env,discount_factor=0.9)
 
-#view_policy(Q_learn_pol)
+# view_policy(Q_learn_pol)
 
 env.close()
