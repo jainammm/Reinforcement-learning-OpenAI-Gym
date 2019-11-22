@@ -243,9 +243,15 @@ def view_policy(policy):
     
     return counter
 
+polCounter = [view_policy(policyPI) for i in range(1000)]
+print(np.average(polCounter))
 
+print('Plot for number of steps for 1000 episodes.')
+plt.hist(polCounter) 
+plt.xlabel('Episode') 
+plt.ylabel('Number of Steps') 
 
-def Q_learning_train(env,alpha,gamma,epsilon,episodes): 
+def Q_learning_train(env,alpha,gamma,epsilon,episodes):  
     """Q Learning Algorithm with epsilon greedy policy
 
     Arguments:
@@ -264,36 +270,54 @@ def Q_learning_train(env,alpha,gamma,epsilon,episodes):
 
     
     #Initialize Q table here
-    q_table = np.zeros([env.observation_space.n, env.action_space.n])  
+    q_table = np.zeros([env.observation_space.n, env.action_space.n]) 
     
-    for i in range(1, episodes+1):
+    epRewards = np.zeros(episodes)
+    
+    for i in range(episodes):
         state = env.reset()
-        # implement the Q-learning algo here
+        
+        reward=0
+        totalReward = 0
+        
+        while reward != 20:
+            if random.uniform(0, 1) < epsilon:
+                action = random.randint(0, 5)
+            else:
+                action = np.argmax(q_table[state])
+                
+            observation, reward, done, info = env.step(action)
+            totalReward += reward
+            
+            oldValue = q_table[state, action]
+            nextValue = np.max(q_table[observation])
+            
+            newValue = (1-alpha) * oldValue + alpha * (reward + gamma * nextValue)
+            
+            q_table[state, action] = newValue
+            
+            state = observation
+            
+        epRewards[i] = totalReward
 
        # Start with a random policy
     policy = np.ones([env.env.nS, env.env.nA]) / env.env.nA
 
-    for state in range(env.env.nS):  #for each states
-        #Extract the best optimal policy found so far
+    for state in range(env.env.nS):  
+        policy[state] = np.zeros([env.nA])
+        newAction = np.argmax(q_table[state])
+        policy[state][newAction] = 1
         
     
-    return policy, q_table
+    
+    return policy, q_table, epRewards
 
+env.reset()
+policyQL, qTableQL, epRewards = Q_learning_train(env, 0.1, 0.95,0.1,1000)
 
-# Use the following function to see the rendering of the final policy output in the environment
-def view_policy(policy):
-    curr_state = env.reset()
-    counter = 0
-    reward = None
-    while reward != 20:
-        state, reward, done, info = env.step(np.argmax(policy[0][curr_state])) 
-        curr_state = state
-        counter += 1
-        env.env.s = curr_state
-        env.render()
-
-
-
+import matplotlib.pyplot as plt
+plt.plot(epRewards, linestyle='solid') # plotting by columns
+plt.show()
 # random_policy = np.ones([env.env.nS, env.env.nA]) / env.env.nA
 # policy_eval(random_policy,env,discount_factor=0.9)
 
