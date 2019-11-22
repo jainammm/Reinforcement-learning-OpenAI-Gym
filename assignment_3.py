@@ -209,6 +209,10 @@ def value_iteration(env, theta=0.0001, discount_factor=1.0):
     print(numIterations)    
     return policy, V
 
+env.reset()
+policyVI,valueVI = value_iteration(env, discount_factor=0.95)
+# print(policyVI)
+# print(valueVI)
 
 def Q_learning_train(env,alpha,gamma,epsilon,episodes): 
     """Q Learning Algorithm with epsilon greedy policy
